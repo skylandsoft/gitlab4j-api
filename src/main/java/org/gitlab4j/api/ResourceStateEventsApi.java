@@ -64,7 +64,7 @@ public class ResourceStateEventsApi extends AbstractApi {
     /**
      * Gets a list of all state events for a single merge request.
      *
-     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_request_iidresource_state_events</code></pre>
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_request_iid/resource_state_events</code></pre>
      *
      * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
      * @param mergeRequestIid the IID of the merge request
@@ -78,7 +78,7 @@ public class ResourceStateEventsApi extends AbstractApi {
     /**
      * Gets a Pager of all state events for a single merge request.
      *
-     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid7resource_state_events</code></pre>
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid/resource_state_events</code></pre>
      *
      * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
      * @param mergeRequestIid the IID of the merge request
@@ -94,7 +94,7 @@ public class ResourceStateEventsApi extends AbstractApi {
     /**
      * Gets a Stream of all state events for a single merge request.
      *
-     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid7resource_state_events</code></pre>
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid/resource_state_events</code></pre>
      *
      * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
      * @param mergeRequestIid the IID of the merge request
