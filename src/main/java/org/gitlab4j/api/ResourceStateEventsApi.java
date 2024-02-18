@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.gitlab4j.api.models.IssueEvent;
+import org.gitlab4j.api.models.MergeRequestStateEvent;
 
 
 /**
@@ -42,7 +43,7 @@ public class ResourceStateEventsApi extends AbstractApi {
      * @throws GitLabApiException if any exception occurs
      */
     public Pager<IssueEvent> getIssueStateEvents(Object projectIdOrPath, Long issueIid, int itemsPerPage) throws GitLabApiException {
-        return (new Pager<IssueEvent>(this, IssueEvent.class, itemsPerPage, null,
+        return (new Pager<>(this, IssueEvent.class, itemsPerPage, null,
             "projects", getProjectIdOrPath(projectIdOrPath), "issues", issueIid, "resource_state_events"));
     }
 
@@ -58,5 +59,49 @@ public class ResourceStateEventsApi extends AbstractApi {
      */
     public Stream<IssueEvent> getIssueStateEventsStream(Object projectIdOrPath, Long issueIid) throws GitLabApiException {
         return (getIssueStateEvents(projectIdOrPath, issueIid, getDefaultPerPage()).stream());
+    }
+
+    /**
+     * Gets a list of all state events for a single merge request.
+     *
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_request_iidresource_state_events</code></pre>
+     *
+     * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
+     * @param mergeRequestIid the IID of the merge request
+     * @return a List of MergeRequestStateEvent for the specified merge request
+     * @throws GitLabApiException if any exception occurs
+     */
+    public List<MergeRequestStateEvent> getgetMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
+        return (getgetMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).all());
+    }
+
+    /**
+     * Gets a Pager of all state events for a single merge request.
+     *
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid7resource_state_events</code></pre>
+     *
+     * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
+     * @param mergeRequestIid the IID of the merge request
+     * @param itemsPerPage the number of LabelEvent instances that will be fetched per page
+     * @return the Pager of MergeRequestStateEvent instances for the specified merge request IID
+     * @throws GitLabApiException if any exception occurs
+     */
+    public Pager<MergeRequestStateEvent> getgetMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid, int itemsPerPage) throws GitLabApiException {
+        return (new Pager<>(this, MergeRequestStateEvent.class, itemsPerPage, null,
+            "projects", getProjectIdOrPath(projectIdOrPath), "merge_requests", mergeRequestIid, "resource_state_events"));
+    }
+
+    /**
+     * Gets a Stream of all state events for a single merge request.
+     *
+     * <pre><code>GitLab Endpoint: GET /projects/:id/merge_requests/merge_request_iid7resource_state_events</code></pre>
+     *
+     * @param projectIdOrPath id, path of the project, or a Project instance holding the project ID or path
+     * @param mergeRequestIid the IID of the merge request
+     * @return a Stream of MergeRequestStateEvent for the specified merge request
+     * @throws GitLabApiException if any exception occurs
+     */
+    public Stream<MergeRequestStateEvent> getgetMergeRequestStateEventsStream(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
+        return (getgetMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).stream());
     }
 }
