@@ -71,8 +71,8 @@ public class ResourceStateEventsApi extends AbstractApi {
      * @return a List of MergeRequestStateEvent for the specified merge request
      * @throws GitLabApiException if any exception occurs
      */
-    public List<MergeRequestStateEvent> getgetMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
-        return (getgetMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).all());
+    public List<MergeRequestStateEvent> getMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
+        return (getMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).all());
     }
 
     /**
@@ -86,7 +86,7 @@ public class ResourceStateEventsApi extends AbstractApi {
      * @return the Pager of MergeRequestStateEvent instances for the specified merge request IID
      * @throws GitLabApiException if any exception occurs
      */
-    public Pager<MergeRequestStateEvent> getgetMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid, int itemsPerPage) throws GitLabApiException {
+    public Pager<MergeRequestStateEvent> getMergeRequestStateEvents(Object projectIdOrPath, Long mergeRequestIid, int itemsPerPage) throws GitLabApiException {
         return (new Pager<>(this, MergeRequestStateEvent.class, itemsPerPage, null,
             "projects", getProjectIdOrPath(projectIdOrPath), "merge_requests", mergeRequestIid, "resource_state_events"));
     }
@@ -101,7 +101,7 @@ public class ResourceStateEventsApi extends AbstractApi {
      * @return a Stream of MergeRequestStateEvent for the specified merge request
      * @throws GitLabApiException if any exception occurs
      */
-    public Stream<MergeRequestStateEvent> getgetMergeRequestStateEventsStream(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
-        return (getgetMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).stream());
+    public Stream<MergeRequestStateEvent> getMergeRequestStateEventsStream(Object projectIdOrPath, Long mergeRequestIid) throws GitLabApiException {
+        return (getMergeRequestStateEvents(projectIdOrPath, mergeRequestIid, getDefaultPerPage()).stream());
     }
 }
