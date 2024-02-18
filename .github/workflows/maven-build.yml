@@ -1,0 +1,49 @@
+name: CI
+
+on: 
+  push:
+    branches:
+      - main
+      - 6.x
+      - '!/refs/heads/dependabot/*'
+
+# this is required by spotless for JDK 16+
+env:
+  JAVA_11_PLUS_MAVEN_OPTS: "--add-opens jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+
+jobs:
+  build:
+    name: build-only (Java ${{ matrix.java }})
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 11 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'adopt'
+          cache: 'maven'
+      - name: Maven Install (skipTests)
+        env:
+          MAVEN_OPTS: ${{ env.JAVA_11_PLUS_MAVEN_OPTS }}
+        run: mvn -B clean install -DskipTests -Ddocker.skip=true -Djacoco.skip=true --file pom.xml
+  publish:
+    runs-on: ubuntu-18.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'adopt'
+      - name: Publish package
+        run: mvn --batch-mode deploy -DskipTests -Ddocker.skip=true -Djacoco.skip=true --file pom.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
