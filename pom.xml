@@ -10,11 +10,22 @@
 	<description>GitLab4J-API (gitlab4j-api) provides a full featured Java client library for working with GitLab repositories and servers via the GitLab REST API.</description>
 	<url>https://github.com/skylandsoft/gitlab4j-api</url>
 
+	<scm>
+		<connection>scm:git:ssh://github.com/skylandsoft/gitlab4j-api.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/skylandsoft/gitlab4j-api.git</developerConnection>
+		<url>https://github.com/skylandsoft/gitlab4j-api</url>
+	</scm>
+
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/skylandsoft/gitlab4j-api/issues</url>
+	</issueManagement>
+
 	<distributionManagement>
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/skylandsoft/java-gitlab-api</url>
+			<url>https://maven.pkg.github.com/skylandsoft/gitlab4j-api</url>
 		</repository>
 	</distributionManagement>
 
