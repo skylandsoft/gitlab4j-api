@@ -1,0 +1,154 @@
+plugins {
+    id 'com.diffplug.spotless' version '6.25.0' apply false
+    id 'org.kordamp.gradle.jandex' version '2.1.0' apply false
+    id 'net.researchgate.release' version '3.1.0'
+}
+
+wrapper {
+    gradleVersion = '8.10.1'
+}
+
+String groupId = 'org.gitlab4j'
+group = groupId
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'com.diffplug.spotless'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.kordamp.gradle.jandex'
+
+    group = groupId
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
+
+        compileJava.options.encoding = "UTF-8"
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(11)
+        }
+    }
+
+    spotless {
+        java {
+            palantirJavaFormat()
+            importOrder 'java', 'javax', 'jakarta', 'org', 'com', ''
+            removeUnusedImports()
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+
+    tasks.named("javadoc") {
+        inputs.files(tasks.getByPath("jandex").outputs.files)
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+
+                pom {
+                    name = 'GitLab4J-API - GitLab API Java Client'
+                    description = 'GitLab4J-API (gitlab4j-api) provides a full featured Java client library for working with GitLab repositories and servers via the GitLab REST API.'
+                    url = 'https://github.com/skylandsoft/gitlab4j-api'
+
+                    licenses {
+                        license {
+                            name = 'The MIT License (MIT)'
+                            url = 'http://opensource.org/licenses/MIT'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'gmessner'
+                            name = 'Greg Messner'
+                            email = 'greg@messners.com'
+                        }
+                        developer {
+                            id = 'gdesaintmartinlacaze'
+                            name = 'Gautier de Saint Martin Lacaze'
+                            email = 'gautier@jabby-techs.fr'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git@github.com:skylandsoft/gitlab4j-api.git'
+                        developerConnection = 'scm:git:git@github.com:skylandsoft/gitlab4j-api.git'
+                        url = 'https://github.com/skylandsoft/gitlab4j-api'
+                    }
+
+                    issueManagement {
+                        system = 'Github'
+                        url = 'https://github.com/skylandsoft/gitlab4j-api/issues'
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/skylandsoft/gitlab4j-api")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                    password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+}
+
+release {
+    buildTasks = [
+            'checkLastVersionValue',
+            'clean',
+            'build',
+            'publishAllPublicationsToGitHubPackagesRepository'
+    ]
+    git {
+        requireBranch.set('main')
+    }
+}
+
+def checkLastVersionValueTask = tasks.register('checkLastVersionValue') {
+    doLast {
+        if(version.endsWith('SNAPSHOT')) {
+            throw new GradleException("version '$version' ends with SNAPSHOT, this is not a release build!")
+        }
+        if(lastVersion != version) {
+            throw new GradleException("lastVersion '$lastVersion' does not match version '$version', fix it in the 'gradle.properties' file.")
+        }
+    }
+}
+
+def updateLastVersionValueTask = tasks.register('updateLastVersionValue') {
+    doLast {
+        def propertiesFile = file('gradle.properties')
+        def content = propertiesFile.text
+        def newVersion = project.findProperty('release.releaseVersion') ?: version.replace('-SNAPSHOT', '')
+        content = content.replaceAll("lastVersion=[0-9a-z\\.\\-]+", "lastVersion=" + newVersion)
+        propertiesFile.text = content
+
+        def readmeFile = file('README.md')
+        if (readmeFile.exists()) {
+            def readme = readmeFile.text
+            readme = readme.replace(lastVersion, newVersion)
+            readmeFile.text = readme
+        }
+    }
+}
+
+model {
+    tasks.unSnapshotVersion {
+        dependsOn updateLastVersionValueTask
+    }
+}
