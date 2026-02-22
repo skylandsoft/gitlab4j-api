@@ -1,7 +1,9 @@
 plugins {
     id 'com.diffplug.spotless' version '6.25.0' apply false
     id 'org.kordamp.gradle.jandex' version '2.1.0' apply false
-    id 'net.researchgate.release' version '3.1.0'
+    id 'base'
+    id 'org.jreleaser' version '1.19.0'
+    id 'maven-publish'
 }
 
 wrapper {
@@ -39,6 +41,14 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/skylandsoft/gitlab4j-api")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 
     tasks.named('test') {
@@ -50,8 +60,19 @@ subprojects {
     }
 
     publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/skylandsoft/gitlab4j-api")
+                credentials {
+                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                    password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+
         publications {
-            maven(MavenPublication) {
+            gpr(MavenPublication) {
                 from components.java
 
                 pom {
@@ -93,62 +114,40 @@ subprojects {
                 }
             }
         }
+    }
 
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/skylandsoft/gitlab4j-api")
-                credentials {
-                    username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-                    password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+}
+
+jreleaser {
+    release {
+        github {
+            enabled = true
+            repoOwner = "$githubRepositoryOwner"
+            name = "$githubRepositoryName"
+            tagName = '{{projectVersion}}'
+            overwrite = true
+            skipTag = true
+            releaseNotes {
+                enabled = true
+            }
+            changelog {
+                enabled = false
+            }
+            milestone {
+                close = true
+            }
+            issues {
+                enabled = true
+                comment = 'This issue has been resolved in `{{tagName}}` ([Release Notes]({{releaseNotesUrl}}))'
+                applyMilestone = 'ALWAYS'
+
+                label {
+                    name = 'released'
+                    color = '#FF0000'
+                    description = 'Issue has been released'
                 }
             }
         }
     }
 }
 
-release {
-    buildTasks = [
-            'checkLastVersionValue',
-            'clean',
-            'build',
-            'publishAllPublicationsToGitHubPackagesRepository'
-    ]
-    git {
-        requireBranch.set('main')
-    }
-}
-
-def checkLastVersionValueTask = tasks.register('checkLastVersionValue') {
-    doLast {
-        if(version.endsWith('SNAPSHOT')) {
-            throw new GradleException("version '$version' ends with SNAPSHOT, this is not a release build!")
-        }
-        if(lastVersion != version) {
-            throw new GradleException("lastVersion '$lastVersion' does not match version '$version', fix it in the 'gradle.properties' file.")
-        }
-    }
-}
-
-def updateLastVersionValueTask = tasks.register('updateLastVersionValue') {
-    doLast {
-        def propertiesFile = file('gradle.properties')
-        def content = propertiesFile.text
-        def newVersion = project.findProperty('release.releaseVersion') ?: version.replace('-SNAPSHOT', '')
-        content = content.replaceAll("lastVersion=[0-9a-z\\.\\-]+", "lastVersion=" + newVersion)
-        propertiesFile.text = content
-
-        def readmeFile = file('README.md')
-        if (readmeFile.exists()) {
-            def readme = readmeFile.text
-            readme = readme.replace(lastVersion, newVersion)
-            readmeFile.text = readme
-        }
-    }
-}
-
-model {
-    tasks.unSnapshotVersion {
-        dependsOn updateLastVersionValueTask
-    }
-}
