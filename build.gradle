@@ -70,50 +70,6 @@ subprojects {
                 }
             }
         }
-
-        publications {
-            gpr(MavenPublication) {
-                from components.java
-
-                pom {
-                    name = 'GitLab4J-API - GitLab API Java Client'
-                    description = 'GitLab4J-API (gitlab4j-api) provides a full featured Java client library for working with GitLab repositories and servers via the GitLab REST API.'
-                    url = 'https://github.com/skylandsoft/gitlab4j-api'
-
-                    licenses {
-                        license {
-                            name = 'The MIT License (MIT)'
-                            url = 'http://opensource.org/licenses/MIT'
-                            distribution = 'repo'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = 'gmessner'
-                            name = 'Greg Messner'
-                            email = 'greg@messners.com'
-                        }
-                        developer {
-                            id = 'gdesaintmartinlacaze'
-                            name = 'Gautier de Saint Martin Lacaze'
-                            email = 'gautier@jabby-techs.fr'
-                        }
-                    }
-
-                    scm {
-                        connection = 'scm:git:git@github.com:skylandsoft/gitlab4j-api.git'
-                        developerConnection = 'scm:git:git@github.com:skylandsoft/gitlab4j-api.git'
-                        url = 'https://github.com/skylandsoft/gitlab4j-api'
-                    }
-
-                    issueManagement {
-                        system = 'Github'
-                        url = 'https://github.com/skylandsoft/gitlab4j-api/issues'
-                    }
-                }
-            }
-        }
     }
 
 }
