@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   validation:
     name: "Gradle wrapper validation"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: gradle/actions/wrapper-validation@v4
