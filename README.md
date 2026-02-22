@@ -13,11 +13,12 @@ GitLab4J-API supports both GitLab Community Edition [(gitlab-ce)](https://gitlab
 
 **NOTICE**:  
 As of GitLab 11.0 support for the GitLab API v3 has been removed from the GitLab server (see https://about.gitlab.com/2018/06/01/api-v3-removal-impending/). Support for GitLab API v3 has been removed from this library in April 2025.
+
 ---
 ## Using GitLab4J-API
 
 ### **Java 11 Requirement**
-As of GitLab4J-API 6.1.0, Java 11+ is now required to use GitLab4J-API.
+As of GitLab4J-API 6.2.0, Java 11+ is now required to use GitLab4J-API.
 
 ### **Javadocs**
 Javadocs are available here: [![javadoc.io](https://javadoc.io/badge2/org.gitlab4j/gitlab4j-api/javadoc.io.svg)](https://javadoc.io/doc/org.gitlab4j/gitlab4j-api)
@@ -30,7 +31,7 @@ To utilize GitLab4J&trade; API in your Java project, simply add the following de
 ```java
 dependencies {
     ...
-    implementation group: 'org.gitlab4j', name: 'gitlab4j-api', version: '6.1.0'
+    implementation group: 'org.gitlab4j', name: 'gitlab4j-api', version: '6.2.0'
 }
 ```
 
@@ -39,7 +40,7 @@ dependencies {
 <dependency>
     <groupId>org.gitlab4j</groupId>
     <artifactId>gitlab4j-api</artifactId>
-    <version>6.1.0</version>
+    <version>6.2.0</version>
 </dependency>
 ```
 
@@ -50,7 +51,7 @@ dependencies {
  Just add this line at the top of your script:
 
 ```java
-//DEPS org.gitlab4j:gitlab4j-api:6.1.0
+//DEPS org.gitlab4j:gitlab4j-api:6.2.0
 ```
 
 **Ivy and SBT**<br/>
@@ -145,7 +146,7 @@ Those projects might want to use the Jackson-based model classes, and implement 
 ```java
 dependencies {
     ...
-    implementation 'org.gitlab4j:gitlab4j-models:6.1.0'
+    implementation 'org.gitlab4j:gitlab4j-models:6.2.0'
 }
 ```
 
@@ -154,7 +155,7 @@ dependencies {
 <dependency>
     <groupId>org.gitlab4j</groupId>
     <artifactId>gitlab4j-models</artifactId>
-    <version>6.1.0</version>
+    <version>6.2.0</version>
 </dependency>
 ```
 
