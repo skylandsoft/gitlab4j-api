@@ -3140,6 +3140,31 @@ public class ProjectApi extends AbstractApi implements Constants {
     }
 
     /**
+     * Downloads a previously uploaded file from the specified project using its secret and filename.
+     *
+     * <pre><code>GitLab Endpoint: GET /projects/:id/uploads/:secret/:filename</code></pre>
+     *
+     * @param projectIdOrPath the project in the form of an Long(ID), String(path), or Project instance, required
+     * @param secret the secret token from the upload URL, required
+     * @param filename the filename from the upload URL, required
+     * @return an InputStream to read the file content from
+     * @throws GitLabApiException if any exception occurs
+     */
+    public InputStream downloadUploadFile(Object projectIdOrPath, String secret, String filename)
+            throws GitLabApiException {
+        Response response = getWithAccepts(
+                Response.Status.OK,
+                null,
+                MediaType.MEDIA_TYPE_WILDCARD,
+                "projects",
+                getProjectIdOrPath(projectIdOrPath),
+                "uploads",
+                secret,
+                filename);
+        return (response.readEntity(InputStream.class));
+    }
+
+    /**
      * Get the project's push rules.
      *
      * <pre><code>GitLab Endpoint: GET /projects/:id/push_rule</code></pre>
