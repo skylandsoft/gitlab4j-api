@@ -21,6 +21,8 @@ public class MergeRequestParams implements Serializable {
     private List<Long> reviewerIds;
     private Long milestoneId;
     private List<String> labels;
+    private List<String> addLabels;
+    private List<String> removeLabels;
     private String description;
     private Long targetProjectId;
     private StateEvent stateEvent;
@@ -29,6 +31,7 @@ public class MergeRequestParams implements Serializable {
     private Boolean discussionLocked;
     private Boolean allowCollaboration;
     private Integer approvalsBeforeMerge;
+    private Boolean draft;
 
     /**
      * Set the source branch. This is for merge request creation only.
@@ -132,6 +135,56 @@ public class MergeRequestParams implements Serializable {
     }
 
     /**
+     * Add labels to the merge request (without affecting existing labels).
+     * If a label does not already exist, this creates a new project label and assigns it to the merge request.
+     * This is for merge request updates only.
+     *
+     * @param addLabels the List of labels to add
+     * @return the reference to this MergeRequestParams instance
+     */
+    public MergeRequestParams withAddLabels(List<String> addLabels) {
+        this.addLabels = addLabels;
+        return (this);
+    }
+
+    /**
+     * Add labels to the merge request (without affecting existing labels).
+     * If a label does not already exist, this creates a new project label and assigns it to the merge request.
+     * This is for merge request updates only.
+     *
+     * @param addLabels the array of labels to add
+     * @return the reference to this MergeRequestParams instance
+     */
+    public MergeRequestParams withAddLabels(String[] addLabels) {
+        this.addLabels = (addLabels != null ? Arrays.asList(addLabels) : null);
+        return (this);
+    }
+
+    /**
+     * Remove labels from the merge request (without affecting other labels).
+     * This is for merge request updates only.
+     *
+     * @param removeLabels the List of labels to remove
+     * @return the reference to this MergeRequestParams instance
+     */
+    public MergeRequestParams withRemoveLabels(List<String> removeLabels) {
+        this.removeLabels = removeLabels;
+        return (this);
+    }
+
+    /**
+     * Remove labels from the merge request (without affecting other labels).
+     * This is for merge request updates only.
+     *
+     * @param removeLabels the array of labels to remove
+     * @return the reference to this MergeRequestParams instance
+     */
+    public MergeRequestParams withRemoveLabels(String[] removeLabels) {
+        this.removeLabels = (removeLabels != null ? Arrays.asList(removeLabels) : null);
+        return (this);
+    }
+
+    /**
      * Set the description of the merge request. Limited to 1,048,576 characters.
      *
      * @param description the description to set
@@ -221,6 +274,17 @@ public class MergeRequestParams implements Serializable {
     }
 
     /**
+     * Set the draft flag of the merge request.
+     *
+     * @param draft the draft flag to set
+     * @return the reference to this MergeRequestParams instance
+     */
+    public MergeRequestParams withDraft(Boolean draft) {
+        this.draft = draft;
+        return (this);
+    }
+
+    /**
      * Get the form params specified by this instance.
      *
      * @param isCreate set to true if this is for a create merge request API call,
@@ -229,9 +293,16 @@ public class MergeRequestParams implements Serializable {
      */
     public GitLabForm getForm(boolean isCreate) {
 
+        String titleToUse;
+        if (Boolean.TRUE.equals(draft)) {
+            titleToUse = "Draft: " + (title != null ? title : "");
+        } else {
+            titleToUse = title;
+        }
+
         GitLabForm form = new GitLabForm()
                 .withParam("target_branch", targetBranch, isCreate)
-                .withParam("title", title, isCreate)
+                .withParam("title", titleToUse, isCreate)
                 .withParam("assignee_id", assigneeId)
                 .withParam("assignee_ids", assigneeIds)
                 .withParam("reviewer_ids", reviewerIds)
@@ -247,7 +318,10 @@ public class MergeRequestParams implements Serializable {
                     .withParam("target_project_id", targetProjectId)
                     .withParam("approvals_before_merge", approvalsBeforeMerge);
         } else {
-            form.withParam("state_event", stateEvent).withParam("discussion_locked", discussionLocked);
+            form.withParam("state_event", stateEvent)
+                    .withParam("discussion_locked", discussionLocked)
+                    .withParam("add_labels", (addLabels != null ? String.join(",", addLabels) : null))
+                    .withParam("remove_labels", (removeLabels != null ? String.join(",", removeLabels) : null));
         }
 
         return (form);

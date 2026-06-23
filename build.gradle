@@ -7,7 +7,7 @@ plugins {
 }
 
 wrapper {
-    gradleVersion = '8.10.1'
+    gradleVersion = '8.14.3'
 }
 
 String groupId = 'org.gitlab4j'

@@ -54,5 +54,11 @@ build/
 # Test properties file for gitlab4j
 gitlab4j-mock-config-*.properties
 
+# asdf (https://asdf-vm.com/) config file 
+.tool-versions
+
 # git-changelog plugin #
 .okhttpcache
+
+# IntelliJ HTTP Client private environment (contains tokens)
+http-client.private.env.json
