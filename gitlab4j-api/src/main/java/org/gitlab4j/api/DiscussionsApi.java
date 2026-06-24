@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.Response;
 
 import org.gitlab4j.api.models.Discussion;
+import org.gitlab4j.api.models.LineRange;
 import org.gitlab4j.api.models.Note;
 import org.gitlab4j.api.models.Position;
 import org.gitlab4j.models.utils.ISO8601;
@@ -447,6 +448,7 @@ public class DiscussionsApi extends AbstractApi {
                     .withParam("position[height]", position.getHeight())
                     .withParam("position[x]", position.getX())
                     .withParam("position[y]", position.getY());
+            addLineRangeParams(formData, position.getLineRange());
         }
 
         Response response = post(
@@ -458,6 +460,48 @@ public class DiscussionsApi extends AbstractApi {
                 mergeRequestIid,
                 "discussions");
         return (response.readEntity(Discussion.class));
+    }
+
+    /**
+     * Adds the multiline note {@code position[line_range]} form parameters when a line range is present.
+     *
+     * @param formData the form data to add the parameters to
+     * @param lineRange the line range of a multiline diff note, may be null
+     */
+    private void addLineRangeParams(GitLabApiForm formData, LineRange lineRange) {
+        if (lineRange == null) {
+            return;
+        }
+
+        if (lineRange.getStart() != null) {
+            formData.withParam(
+                            "position[line_range][start][line_code]",
+                            lineRange.getStart().getLineCode())
+                    .withParam(
+                            "position[line_range][start][type]",
+                            lineRange.getStart().getType())
+                    .withParam(
+                            "position[line_range][start][old_line]",
+                            lineRange.getStart().getOldLine())
+                    .withParam(
+                            "position[line_range][start][new_line]",
+                            lineRange.getStart().getNewLine());
+        }
+
+        if (lineRange.getEnd() != null) {
+            formData.withParam(
+                            "position[line_range][end][line_code]",
+                            lineRange.getEnd().getLineCode())
+                    .withParam(
+                            "position[line_range][end][type]",
+                            lineRange.getEnd().getType())
+                    .withParam(
+                            "position[line_range][end][old_line]",
+                            lineRange.getEnd().getOldLine())
+                    .withParam(
+                            "position[line_range][end][new_line]",
+                            lineRange.getEnd().getNewLine());
+        }
     }
 
     /**
@@ -689,6 +733,7 @@ public class DiscussionsApi extends AbstractApi {
                 .withParam("position[height]", position.getHeight())
                 .withParam("position[x]", position.getX())
                 .withParam("position[y]", position.getY());
+        addLineRangeParams(formData, position.getLineRange());
 
         Response response = post(
                 Response.Status.CREATED,
